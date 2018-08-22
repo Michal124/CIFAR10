@@ -8,9 +8,10 @@ Created on Tue Aug 21 23:04:59 2018
 
 # 2.Visualization libraries
 import matplotlib.pyplot as plt
+import numpy as np
 
 
-def sample_fast_plot(data,title="Sample_images",fig_size =(30,30),title_font = 30, data_num = 4,n_rows = 2,n_cols = 2, save_fig = False):
+def plot_samples(data,output,names,title="Sample_images",fig_size =(30,30),title_font = 50, data_num = 6,n_rows = 2,n_cols = 3, save_fig = False):
     
     """
     Description : Plot sample images from dataset
@@ -26,8 +27,10 @@ def sample_fast_plot(data,title="Sample_images",fig_size =(30,30),title_font = 3
     """
     
     plt.figure(1,figsize = fig_size)
-    for i in range(1,int((data_num)+1)):
+    for i in range(1,int((data_num+1))):
         plt.subplot(n_rows,n_cols,i)
+        a = (np.asscalar(output[i]))
+        plt.title(names[a],fontsize = 35)
         plt.imshow(data[i])
     
     plt.suptitle(title,fontsize=title_font)
@@ -35,7 +38,7 @@ def sample_fast_plot(data,title="Sample_images",fig_size =(30,30),title_font = 3
     if save_fig == True:
         plt.savefig(title)
     
-    
+    del i
     return 0
 
     
