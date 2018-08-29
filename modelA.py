@@ -64,7 +64,6 @@ X_test = X_test.astype('float32')/255
 y_train = to_categorical(y_train)
 y_test = to_categorical(y_test)
 
-
 # =============================================================================
 #                            # Define CNN model
 # =============================================================================
@@ -78,20 +77,14 @@ model = Sequential()
 
 model.add(Conv2D(32,(3,3),activation="relu",input_shape=(32,32,3)))
 model.add(BatchNormalization())
-model.add(Dropout(0.3))
-
 model.add(MaxPooling2D((2,2)))
 
 model.add(Conv2D(64,(3,3),activation="relu",))
 model.add(BatchNormalization())
-model.add(Dropout(0.3))
-
 model.add(MaxPooling2D((2,2)))
 
 model.add(Conv2D(128,(3,3),activation="relu",))
 model.add(BatchNormalization())
-model.add(Dropout(0.3))
-
 model.add(MaxPooling2D((2,2)))
 
 model.add(Flatten())
@@ -105,17 +98,30 @@ model.compile(optimizer='rmsprop',
               loss='categorical_crossentropy',
               metrics=['accuracy'])
 
-history = model.fit(X_train, y_train, epochs=200, batch_size=512,validation_split = 0.2)
+datagen = ImageDataGenerator(zoom_range=0.2,
+                             width_shift_range=0.2,
+                             height_shift_range=0.2,
+                             fill_mode="nearest",
+                             horizontal_flip = True)
 
-myp.plot_training(history)
+datagen.fit(X_train)
+
+history2 = model.fit_generator(datagen.flow(X_train,y_train,batch_size = batch_size),
+                               steps_per_epoch=len(X_train)/batch_size,epochs=epochs,
+                               validation_data=(X_test,y_test),validation_steps=len(X_train)/(batch_size*2))
+
+
+
+myp.plot_training(history2)
 myp.plot_confusion_matrix(model,X_test,y_test,class_names)
+
+loss, accuracy  = model.evaluate(X_test,y_test)
 
 toc = time.time()
 print("Exec time",str((toc-tic)) + "s")
 os.system('say "Learning done"')
 
-model.save("CIFAR-model1")
-
+model.save("CIFAR-model2")
 
 
 
